@@ -1,6 +1,10 @@
 [package]
 authors = ["Marc Brinkmann <git@marcbrinkmann.de>"]
+description = "DMX512 lighting protocol support"
+documentation = "https://docs.rs/dmx"
+license = "MIT"
 name = "dmx"
+repository = "https://github.com/mbr/dmx-rs"
 version = "0.1.0"
 
 [dependencies]
