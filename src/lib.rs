@@ -43,7 +43,7 @@ lazy_static! {
     static ref SERIAL_TOTAL_BREAK: time::Duration = time::Duration::new(0, 136_000);
 }
 
-pub trait DmxPort {
+pub trait DmxTransmitter {
     fn send_break(&mut self) -> serial::Result<()>;
 
     fn send_raw_data(&mut self, data: &[u8]) -> serial::Result<()>;
@@ -69,7 +69,7 @@ pub trait DmxPort {
 }
 
 
-impl<T: serial::SerialPort> DmxPort for T {
+impl<T: serial::SerialPort> DmxTransmitter for T {
     #[inline(always)]
     fn send_break(&mut self) -> serial::Result<()> {
         self.configure(&BREAK_SETTINGS)?;
