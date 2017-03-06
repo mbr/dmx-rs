@@ -1,0 +1,8 @@
+[package]
+authors = ["Marc Brinkmann <git@marcbrinkmann.de>"]
+name = "dmx"
+version = "0.1.0"
+
+[dependencies]
+dmx-serial = "0.4.0"
+lazy_static = "0.2.4"
