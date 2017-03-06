@@ -139,15 +139,40 @@ lazy_static! {
 }
 
 pub trait DmxTransmitter {
+    /// Send a single break.
+    ///
+    /// Sends a break and returns as soon as possible afterwards. A caller is
+    /// itself responsible for waiting an appropriate amount of time before
+    /// sending data.
     fn send_break(&mut self) -> serial::Result<()>;
 
+    /// Send raw data.
+    ///
+    /// Sends out bytes at the appropriate bitrate for DMX. Does **not** send
+    /// a break first.
     fn send_raw_data(&mut self, data: &[u8]) -> serial::Result<()>;
 
+    /// Blocking send a full DMX packet.
+    ///
+    /// Preprends a default start code of `0x00` before sending a
+    /// `break` and channel data.
+    /// Will block until the full send is buffered to be sent out.
+    ///
+    /// This will create an additional stack copy of `channels`; see
+    /// `send_dmx_alt_packet` for details.
     #[inline(always)]
     fn send_dmx_packet(&mut self, channels: &[u8]) -> serial::Result<()> {
         self.send_dmx_alt_packet(channels, 0x00)
     }
 
+    /// Blocking send a full DMX packet with a non-standard start code.
+    ///
+    /// Prepends an arbitrary start code `start` to a packet using a buffer
+    /// on the stack (no allocations are made, but the cost of an extra copy
+    /// is incurred). If required, this can be avoided by using
+    /// `send_raw_dmx_packet`.
+    ///
+    /// Like `send_dmx_packet` will send a break first.
     #[inline]
     fn send_dmx_alt_packet(&mut self, channels: &[u8], start: u8) -> serial::Result<()> {
         let mut prefixed = [0; 513];
@@ -160,6 +185,9 @@ pub trait DmxTransmitter {
         self.send_raw_dmx_packet(&prefixed)
     }
 
+    /// Blocking send a DMX packet including start code.
+    ///
+    /// Sends a break, followed by the specified data.
     fn send_raw_dmx_packet(&mut self, data: &[u8]) -> serial::Result<()>;
 }
 
@@ -192,6 +220,7 @@ impl<T: serial::SerialPort> DmxTransmitter for T {
     }
 }
 
+/// Opens a serial device with DMX support.
 pub fn open_serial<T: AsRef<OsStr> + ?Sized>(port: &T) -> serial::Result<serial::SystemPort> {
     serial::open(port)
 }
