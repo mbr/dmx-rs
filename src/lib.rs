@@ -93,8 +93,6 @@
 ///    }
 /// ```
 
-
-
 use std::ffi::OsStr;
 
 extern crate dmx_serial as serial;
