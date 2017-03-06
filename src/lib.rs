@@ -138,6 +138,10 @@ lazy_static! {
     static ref SERIAL_TOTAL_BREAK: time::Duration = time::Duration::new(0, 136_000);
 }
 
+/// A DMX transmitter.
+///
+/// Usually there is one transmitter on a bus, the master. Transmitters send
+/// DMX data.
 pub trait DmxTransmitter {
     /// Send a single break.
     ///
