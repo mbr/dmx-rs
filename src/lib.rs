@@ -1,4 +1,4 @@
-//! DMX512
+//! # DMX512
 //!
 //! The "Digital Multiplex" (DMX) protocol is used to control stage lighting
 //! and effects in large and small setups. It is electrically based on [RS485]
