@@ -149,14 +149,16 @@ pub trait DmxTransmitter {
     /// Send raw data.
     ///
     /// Sends out bytes at the appropriate bitrate for DMX. Does **not** send
-    /// a break first.
+    /// a break first. Returns after the data is buffered, which might be
+    /// before transmitting is complete.
     fn send_raw_data(&mut self, data: &[u8]) -> serial::Result<()>;
 
     /// Blocking send a full DMX packet.
     ///
     /// Preprends a default start code of `0x00` before sending a
     /// `break` and channel data.
-    /// Will block until the full send is buffered to be sent out.
+    /// Will block until the full send is buffered to be sent out, but may
+    /// return before the transmission is complete.
     ///
     /// This will create an additional stack copy of `channels`; see
     /// `send_dmx_alt_packet` for details.
@@ -172,7 +174,8 @@ pub trait DmxTransmitter {
     /// is incurred). If required, this can be avoided by using
     /// `send_raw_dmx_packet`.
     ///
-    /// Like `send_dmx_packet` will send a break first.
+    /// Like `send_dmx_packet` will send a break first and returns after
+    /// buffering.
     #[inline]
     fn send_dmx_alt_packet(&mut self, channels: &[u8], start: u8) -> serial::Result<()> {
         let mut prefixed = [0; 513];
@@ -187,7 +190,7 @@ pub trait DmxTransmitter {
 
     /// Blocking send a DMX packet including start code.
     ///
-    /// Sends a break, followed by the specified data.
+    /// Sends a break, followed by the specified data. Returns after buffering.
     fn send_raw_dmx_packet(&mut self, data: &[u8]) -> serial::Result<()>;
 }
 
