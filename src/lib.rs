@@ -146,18 +146,18 @@ pub trait DmxTransmitter {
     fn send_raw_data(&mut self, data: &[u8]) -> serial::Result<()>;
 
     #[inline(always)]
-    fn send_dmx_packet(&mut self, data: &[u8]) -> serial::Result<()> {
-        self.send_dmx_alt_packet(data, 0x00)
+    fn send_dmx_packet(&mut self, channels: &[u8]) -> serial::Result<()> {
+        self.send_dmx_alt_packet(channels, 0x00)
     }
 
     #[inline]
-    fn send_dmx_alt_packet(&mut self, data: &[u8], start: u8) -> serial::Result<()> {
+    fn send_dmx_alt_packet(&mut self, channels: &[u8], start: u8) -> serial::Result<()> {
         let mut prefixed = [0; 513];
-        let dlen = cmp::min(data.len(), 512);
+        let dlen = cmp::min(channels.len(), 512);
 
         // prepare prefixed packet
         prefixed[0] = start;
-        prefixed[1..(dlen + 1)].clone_from_slice(data);
+        prefixed[1..(dlen + 1)].clone_from_slice(channels);
 
         self.send_raw_dmx_packet(&prefixed)
     }
